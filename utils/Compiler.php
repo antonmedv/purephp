@@ -34,6 +34,7 @@ class Compiler
         $finder->files()
             ->ignoreVCS(true)
             ->name('*.php')
+            ->name('pure')
             ->exclude('phpunit')
             ->exclude('Tests')
             ->exclude('test')
@@ -107,9 +108,9 @@ class Compiler
         return <<<'EOF'
 #!/usr/bin/env php
 <?php
-require 'phar://pure.phar/vendor/autoload.php';
+Phar::mapPhar('pure.phar');
 
-Pure\Pure::run();
+require 'phar://pure.phar/pure';
 
 __HALT_COMPILER();
 EOF;
