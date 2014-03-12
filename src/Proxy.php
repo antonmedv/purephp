@@ -32,7 +32,8 @@ class Proxy
         if ($this->reflectionClass->hasMethod($name)) {
             return $this->client->command([$this->alias, $this->path, $name, $arguments]);
         } else {
-            throw new \RuntimeException("Class `{$this->alias}` does not have method `{$name}`.");
+            $class = StoreFactory::getClassByAlias($this->alias);
+            throw new \RuntimeException("Class `{$class}` does not have method `{$name}`.");
         }
     }
 }
