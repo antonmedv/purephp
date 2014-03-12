@@ -105,6 +105,7 @@ class Compiler
     private function getStub()
     {
         return <<<'EOF'
+#!/usr/bin/env php
 <?php
 require 'phar://pure.phar/vendor/autoload.php';
 
