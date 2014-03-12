@@ -22,6 +22,7 @@ class LifetimeStore implements StoreInterface
     {
         unset($this->data);
         $this->data = [];
+        return true;
     }
 
     public function clearOutdated()
@@ -38,6 +39,7 @@ class LifetimeStore implements StoreInterface
     public function set($key, $value, $lifetime = 0)
     {
         $this->data[$key] = [$value, time() + $lifetime];
+        return true;
     }
 
     public function get($key)
@@ -55,4 +57,9 @@ class LifetimeStore implements StoreInterface
         return isset($this->data[$key]);
     }
 
+    public function delete($key)
+    {
+        unset($this->data[$key]);
+        return true;
+    }
 } 

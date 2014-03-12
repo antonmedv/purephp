@@ -7,8 +7,6 @@
 
 namespace Pure\Store;
 
-use Pure\Client;
-
 class ArrayStore implements StoreInterface
 {
     const alias = 'of';
@@ -24,6 +22,7 @@ class ArrayStore implements StoreInterface
     {
         unset($this->data);
         $this->data = [];
+        return true;
     }
 
     public function push($array)
@@ -49,5 +48,6 @@ class ArrayStore implements StoreInterface
     public function delete($key)
     {
         unset($this->data[$key]);
+        return true;
     }
 } 
