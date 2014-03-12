@@ -37,6 +37,7 @@ class Server
 
         $this->socket = new SocketServer($this->loop);
         $this->socket->on('connection', array($this, 'onConnection'));
+        $this->loop->addPeriodicTimer(1, array($this, 'onTick'));
     }
 
     public function run()
@@ -66,6 +67,10 @@ class Server
             }
         });
 
+    }
+
+    public function onTick()
+    {
     }
 
     private function runCommand($command, ConnectionInterface $connection)
