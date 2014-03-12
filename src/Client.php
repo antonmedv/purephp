@@ -8,6 +8,7 @@
 namespace Pure;
 
 use Pure\Store\ArrayStore;
+use Pure\Store\LifetimeStore;
 use Pure\Store\PriorityQueueStore;
 use Pure\Store\QueueStore;
 use Pure\Store\StackStore;
@@ -52,6 +53,15 @@ class Client
 
     /**
      * @param $path
+     * @return LifetimeStore
+     */
+    public function lifetime($path)
+    {
+        return new Proxy($this, LifetimeStore::class, $path);
+    }
+
+    /**
+     * @param $path
      * @return PriorityQueueStore
      */
     public function priority($path)
@@ -80,13 +90,15 @@ class Client
     public function __get($name)
     {
         switch ($name) {
-            case 'of':
+            case ArrayStore::alias:
                 return new Proxy\Generator($this, ArrayStore::class);
-            case 'priority':
+            case LifetimeStore::alias:
+                return new Proxy\Generator($this, LifetimeStore::class);
+            case PriorityQueueStore::alias:
                 return new Proxy\Generator($this, PriorityQueueStore::class);
-            case 'queue':
+            case QueueStore::alias:
                 return new Proxy\Generator($this, QueueStore::class);
-            case 'stack':
+            case StackStore::alias:
                 return new Proxy\Generator($this, StackStore::class);
             default:
                 throw new \RuntimeException("There are no `$name` store in PurePHP.");

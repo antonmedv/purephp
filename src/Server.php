@@ -8,6 +8,7 @@
 namespace Pure;
 
 use Pure\Store\ArrayStore;
+use Pure\Store\LifetimeStore;
 use React\EventLoop\Factory;
 use React\Socket\ConnectionInterface;
 use React\Socket\Server as SocketServer;
@@ -71,6 +72,11 @@ class Server
 
     public function onTick()
     {
+        if (isset($this->stores[LifetimeStore::class])) {
+            foreach ($this->stores[LifetimeStore::class] as $store) {
+                $store->clearOutdated();
+            }
+        }
     }
 
     private function runCommand($command, ConnectionInterface $connection)

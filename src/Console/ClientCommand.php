@@ -38,6 +38,7 @@ class ClientCommand extends Command
         $auto = [
             'pure',
             'pure.of',
+            'pure.lifetime',
             'pure.queue',
             'pure.stack',
             'pure.priority',
@@ -65,9 +66,7 @@ class ClientCommand extends Command
                     'pure' => $pure,
                 ]);
 
-                if (null !== $result) {
-                    var_dump($result);
-                }
+                var_dump($result);
 
             } catch (\Exception $e) {
                 $output->writeln('<error>' . $e->getMessage() . '</error>');
