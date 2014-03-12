@@ -10,7 +10,17 @@ Via Composer:
     },
 ```
 
-Via Phar file: TODO
+Via Phar file:
+
+```
+Download link will be later.
+```
+
+Download zip archive of repository, extract it and run next commands:
+
+```
+
+```
 
 ## Quick Guide
 Start PurePHP by this command:
