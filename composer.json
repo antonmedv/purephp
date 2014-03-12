@@ -1,0 +1,22 @@
+{
+    "name": "elfet/pure",
+    "description": "Pure PHP key-value storage",
+    "authors": [
+        {
+            "name": "Elfet",
+            "email": "anton@elfet.ru"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Pure\\": "src/"
+        }
+    },
+    "require": {
+        "react/react": "~0.4",
+        "symfony/console": "~2.4",
+        "symfony/expression-language": "~2.4"
+    },
+    "license": "MIT",
+    "minimum-stability": "dev"
+}
