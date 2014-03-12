@@ -16,10 +16,12 @@ Via Phar file:
 Download link will be later.
 ```
 
-Download zip archive of repository, extract it and run next commands:
+[Download zip](https://github.com/elfet/purephp/archive/v0.1.1.zip) archive of repository, extract it and run next commands:
 
 ```
-
+php compile
+mv pure.phar /usr/local/bin/pure
+chmod +x /usr/local/bin//pure
 ```
 
 ## Quick Guide
