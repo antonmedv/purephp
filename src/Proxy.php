@@ -7,30 +7,32 @@
 
 namespace Pure;
 
+use Pure\Store\StoreFactory;
+
 class Proxy
 {
     private $client;
 
-    private $class;
+    private $alias;
 
     private $reflectionClass;
 
     private $path;
 
-    public function __construct(Client $client, $class, $path)
+    public function __construct(Client $client, $alias, $path)
     {
         $this->client = $client;
-        $this->class = $class;
-        $this->reflectionClass = new \ReflectionClass($class);
+        $this->alias = $alias;
+        $this->reflectionClass = new \ReflectionClass(StoreFactory::getClassByAlias($alias));
         $this->path = $path;
     }
 
     public function __call($name, $arguments)
     {
         if ($this->reflectionClass->hasMethod($name)) {
-            return $this->client->command([$this->class, $this->path, $name, $arguments]);
+            return $this->client->command([$this->alias, $this->path, $name, $arguments]);
         } else {
-            throw new \RuntimeException("Class `{$this->class}` does not have method `{$name}`.");
+            throw new \RuntimeException("Class `{$this->alias}` does not have method `{$name}`.");
         }
     }
 }

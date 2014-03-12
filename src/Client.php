@@ -12,6 +12,7 @@ use Pure\Store\LifetimeStore;
 use Pure\Store\PriorityQueueStore;
 use Pure\Store\QueueStore;
 use Pure\Store\StackStore;
+use Pure\Store\StoreFactory;
 
 class Client
 {
@@ -48,7 +49,7 @@ class Client
      */
     public function of($path)
     {
-        return new Proxy($this, ArrayStore::class, $path);
+        return new Proxy($this, ArrayStore::alias, $path);
     }
 
     /**
@@ -57,7 +58,7 @@ class Client
      */
     public function lifetime($path)
     {
-        return new Proxy($this, LifetimeStore::class, $path);
+        return new Proxy($this, LifetimeStore::alias, $path);
     }
 
     /**
@@ -66,7 +67,7 @@ class Client
      */
     public function priority($path)
     {
-        return new Proxy($this, PriorityQueueStore::class, $path);
+        return new Proxy($this, PriorityQueueStore::alias, $path);
     }
 
     /**
@@ -75,7 +76,7 @@ class Client
      */
     public function queue($path)
     {
-        return new Proxy($this, QueueStore::class, $path);
+        return new Proxy($this, QueueStore::alias, $path);
     }
 
     /**
@@ -84,25 +85,12 @@ class Client
      */
     public function stack($path)
     {
-        return new Proxy($this, StackStore::class, $path);
+        return new Proxy($this, StackStore::alias, $path);
     }
 
     public function __get($name)
     {
-        switch ($name) {
-            case ArrayStore::alias:
-                return new Proxy\Generator($this, ArrayStore::class);
-            case LifetimeStore::alias:
-                return new Proxy\Generator($this, LifetimeStore::class);
-            case PriorityQueueStore::alias:
-                return new Proxy\Generator($this, PriorityQueueStore::class);
-            case QueueStore::alias:
-                return new Proxy\Generator($this, QueueStore::class);
-            case StackStore::alias:
-                return new Proxy\Generator($this, StackStore::class);
-            default:
-                throw new \RuntimeException("There are no `$name` store in PurePHP.");
-        }
+        return new Proxy\Generator($this, $name);
     }
 
     public function command($command)

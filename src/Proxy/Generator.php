@@ -12,16 +12,16 @@ use Pure\Proxy;
 class Generator
 {
     private $client;
-    private $class;
+    private $alias;
 
-    public function __construct($client, $class)
+    public function __construct($client, $alias)
     {
         $this->client = $client;
-        $this->class = $class;
+        $this->alias = $alias;
     }
 
     public function __get($path)
     {
-        return new Proxy($this->client, $this->class, $path);
+        return new Proxy($this->client, $this->alias, $path);
     }
 }

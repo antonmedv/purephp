@@ -9,6 +9,7 @@ namespace Pure;
 
 use Pure\Store\ArrayStore;
 use Pure\Store\LifetimeStore;
+use Pure\Store\StoreFactory;
 use React\EventLoop\Factory;
 use React\Socket\ConnectionInterface;
 use React\Socket\Server as SocketServer;
@@ -81,9 +82,10 @@ class Server
 
     private function runCommand($command, ConnectionInterface $connection)
     {
-        list($class, $path, $method, $args) = $command;
+        list($alias, $path, $method, $args) = $command;
+        $class = StoreFactory::getClassByAlias($alias);
 
-        $this->log('Command from ' . $connection->getRemoteAddress() . ': pure.' . $class::alias . ".$path.$method");
+        $this->log('Command from ' . $connection->getRemoteAddress() . ": pure.$alias.$path.$method");
 
         if (!isset($this->stores[$class][$path])) {
             $this->stores[$class][$path] = new $class;
