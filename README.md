@@ -5,7 +5,7 @@ This is simple key-value storage written on PHP.
 Via Composer:
 
 ```
-composer global require elfet/pure:~0.1
+composer require elfet/pure:~0.1
 ```
 
 Via Phar file:
@@ -82,7 +82,7 @@ $pure->queue->collection->...
 //...
 ```
 
-### Array Storage `->of`
+### Array storage `->of`
 
 This is simple storage what uses php array to store your data. 
 To store date in collection use `push` method:
@@ -101,3 +101,39 @@ To receive all elements use `all` method:
 $all = $pure->of('collection')->all();
 ```
 
+To delete all elements use `clear` method:
+```php
+$all = $pure->of('collection')->clear();
+```
+
+You can check if key exist by `has` method, and delete element by `delete` method.
+
+### Stack storage `->stack`
+
+This storage use `SplStack` to store your data.
+
+You can use all `SplStack` methods and also `all`, `clear` methods.
+
+### Queue storage `->queue`
+
+This storage use `SplQueue` to store your data.
+
+You can use `SplQueue` methods and also `all`, `clear` methods.
+
+`SplQueue` uses `enqueue` and `deenqueue` to push and pop from queue. In QueueStorage your can use `push` and `pop` methods to do this.
+
+### Priority Queue storage `->priority`
+
+This storage use `SplPriorityQueue` to store your data.
+
+You can use all `SplPriorityQueue` methods and also `all`, `clear` methods.
+
+### Lifetime Storage `->lifetime`
+
+In this storage you can store data which need to be deleted after some period. Life time in seconds.
+
+```php
+$pure->lifetime('collection')->set($key, $value, $lifetime);
+```
+
+You can get all elements by `all` method, check if key exist by `has` method, and delete element by `delete` method.
