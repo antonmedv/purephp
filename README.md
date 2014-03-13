@@ -82,7 +82,7 @@ $pure->queue->collection->...
 //...
 ```
 
-### Array storage `->of`
+### Array Storage `->of`
 
 This is simple storage what uses php array to store your data. 
 To store date in collection use `push` method:
@@ -108,13 +108,13 @@ $all = $pure->of('collection')->clear();
 
 You can check if key exist by `has` method, and delete element by `delete` method.
 
-### Stack storage `->stack`
+### Stack Storage `->stack`
 
 This storage use `SplStack` to store your data.
 
 You can use all `SplStack` methods and also `all`, `clear` methods.
 
-### Queue storage `->queue`
+### Queue Storage `->queue`
 
 This storage use `SplQueue` to store your data.
 
@@ -122,7 +122,7 @@ You can use `SplQueue` methods and also `all`, `clear` methods.
 
 `SplQueue` uses `enqueue` and `deenqueue` to push and pop from queue. In QueueStorage your can use `push` and `pop` methods to do this.
 
-### Priority Queue storage `->priority`
+### Priority Queue Storage `->priority`
 
 This storage use `SplPriorityQueue` to store your data.
 
