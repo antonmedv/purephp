@@ -50,7 +50,7 @@ In pure console you can write commands on [Expression Language](https://github.c
 
 ## Documentation
 
-### Connection to PurePHP server:
+### Connection to PurePHP server
 ```php
 $port = 1337; // Default port value
 $host = '127.0.0.1'; // Default host value
@@ -63,7 +63,7 @@ $pure = new Pure\Clent($port, $host);
 PurePHP provide diffrent types on stogares. All supported storages are in [src/Storage](https://github.com/elfet/purephp/tree/master/src/Storage). You can access them by next methods and work with them like you work with them directly.
 
 Every storage has separate collection namespace. So you can have for different storages same collection names.
-You do not need to manualy create any collection. They will be automaticty create at first access.
+You do not need to manualy create any collection. They will be automatically create at first access.
 
 ```php
 $pure->of('collection')->...
@@ -89,14 +89,14 @@ To store date in collection use `push` method:
 ```php
 $pure->of('collection')->push(['hello' => 'world']);
 ```
-Collection uses `array_merge` function.
+Array Storage uses `array_merge` function.
 
 To get value by key from collection use `get` method:
 ```php
 $value = $pure->of('collection')->get('hello'); // will return 'world'.
 ```
 
-To recive all elements use `all` method:
+To receive all elements use `all` method:
 ```php
 $all = $pure->of('collection')->all();
 ```
