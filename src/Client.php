@@ -7,12 +7,11 @@
 
 namespace Pure;
 
-use Pure\Store\ArrayStore;
-use Pure\Store\LifetimeStore;
-use Pure\Store\PriorityQueueStore;
-use Pure\Store\QueueStore;
-use Pure\Store\StackStore;
-use Pure\Store\StoreFactory;
+use Pure\Storage\ArrayStorage;
+use Pure\Storage\LifetimeStorage;
+use Pure\Storage\PriorityQueueStorage;
+use Pure\Storage\QueueStorage;
+use Pure\Storage\StackStorage;
 
 class Client
 {
@@ -45,47 +44,47 @@ class Client
 
     /**
      * @param $path
-     * @return ArrayStore
+     * @return ArrayStorage
      */
     public function of($path)
     {
-        return new Proxy($this, ArrayStore::alias, $path);
+        return new Proxy($this, ArrayStorage::alias, $path);
     }
 
     /**
      * @param $path
-     * @return LifetimeStore
+     * @return LifetimeStorage
      */
     public function lifetime($path)
     {
-        return new Proxy($this, LifetimeStore::alias, $path);
+        return new Proxy($this, LifetimeStorage::alias, $path);
     }
 
     /**
      * @param $path
-     * @return PriorityQueueStore
+     * @return PriorityQueueStorage
      */
     public function priority($path)
     {
-        return new Proxy($this, PriorityQueueStore::alias, $path);
+        return new Proxy($this, PriorityQueueStorage::alias, $path);
     }
 
     /**
      * @param $path
-     * @return QueueStore
+     * @return QueueStorage
      */
     public function queue($path)
     {
-        return new Proxy($this, QueueStore::alias, $path);
+        return new Proxy($this, QueueStorage::alias, $path);
     }
 
     /**
      * @param $path
-     * @return StackStore
+     * @return StackStorage
      */
     public function stack($path)
     {
-        return new Proxy($this, StackStore::alias, $path);
+        return new Proxy($this, StackStorage::alias, $path);
     }
 
     public function __get($name)

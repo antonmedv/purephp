@@ -5,11 +5,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Pure\Store;
+namespace Pure\Storage;
 
-class LifetimeStore implements StoreInterface
+class ArrayStorage implements StorageInterface
 {
-    const alias = 'lifetime';
+    const alias = 'of';
 
     private $data = [];
 
@@ -25,28 +25,16 @@ class LifetimeStore implements StoreInterface
         return true;
     }
 
-    public function clearOutdated()
+    public function push($array)
     {
-        foreach($this->data as $key => $store) {
-            list($value, $lifetime) = $store;
-
-            if(time() >= $lifetime) {
-                unset($this->data[$key]);
-            }
-        }
-    }
-
-    public function set($key, $value, $lifetime = 0)
-    {
-        $this->data[$key] = [$value, time() + $lifetime];
+        $this->data = array_merge($this->data, (array)$array);
         return true;
     }
 
     public function get($key)
     {
-        if($this->has($key)) {
-            list($value, $lifetime) = $this->data[$key];
-            return $value;
+        if ($this->has($key)) {
+            return $this->data[$key];
         } else {
             return null;
         }

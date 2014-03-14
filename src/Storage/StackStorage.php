@@ -5,11 +5,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Pure\Store;
+namespace Pure\Storage;
 
-class PriorityQueueStore extends \SplPriorityQueue implements StoreInterface
+class StackStorage extends \SplStack implements StorageInterface
 {
-    const alias = 'priority';
+    const alias = 'stack';
 
     public function all()
     {
@@ -22,8 +22,8 @@ class PriorityQueueStore extends \SplPriorityQueue implements StoreInterface
 
     public function clear()
     {
-        while ($this->valid()) {
-            $this->extract();
+        while($this->valid()) {
+            $this->pop();
         }
     }
 }

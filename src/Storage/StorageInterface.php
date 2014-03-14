@@ -5,11 +5,9 @@
  * file that was distributed with this source code.
  */
 
-namespace Pure\Store;
+namespace Pure\Storage;
 
-use Pure\Client;
-
-interface StoreInterface
+interface StorageInterface
 {
     public function all();
     public function clear();

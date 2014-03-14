@@ -5,11 +5,11 @@
  * file that was distributed with this source code.
  */
 
-namespace Pure\Store;
+namespace Pure\Storage;
 
-class StackStore extends \SplStack implements StoreInterface
+class QueueStorage extends \SplQueue implements StorageInterface
 {
-    const alias = 'stack';
+    const alias = 'queue';
 
     public function all()
     {
@@ -22,8 +22,18 @@ class StackStore extends \SplStack implements StoreInterface
 
     public function clear()
     {
-        while($this->valid()) {
+        while ($this->valid()) {
             $this->pop();
         }
+    }
+
+    public function pop()
+    {
+        return $this->dequeue();
+    }
+
+    public function push($value)
+    {
+        $this->enqueue($value);
     }
 }

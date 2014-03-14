@@ -7,10 +7,9 @@
 
 namespace Pure;
 
-use Pure\Store\ArrayStore;
-use Pure\Store\LifetimeStore;
-use Pure\Store\StoreFactory;
-use React\EventLoop\Factory;
+use Pure\Storage\Factory;
+use Pure\Storage\LifetimeStorage;
+use React\EventLoop\Factory as LoopFactory;
 use React\Socket\ConnectionInterface;
 use React\Socket\Server as SocketServer;
 
@@ -35,7 +34,7 @@ class Server
         $this->host = $host;
         $this->port = $port;
 
-        $this->loop = Factory::create();
+        $this->loop = LoopFactory::create();
 
         $this->socket = new SocketServer($this->loop);
         $this->socket->on('connection', array($this, 'onConnection'));
@@ -68,13 +67,12 @@ class Server
                 }
             }
         });
-
     }
 
     public function onTick()
     {
-        if (isset($this->stores[LifetimeStore::class])) {
-            foreach ($this->stores[LifetimeStore::class] as $store) {
+        if (isset($this->stores[LifetimeStorage::class])) {
+            foreach ($this->stores[LifetimeStorage::class] as $store) {
                 $store->clearOutdated();
             }
         }
@@ -83,9 +81,16 @@ class Server
     private function runCommand($command, ConnectionInterface $connection)
     {
         list($alias, $path, $method, $args) = $command;
-        $class = StoreFactory::getClassByAlias($alias);
+        $class = Factory::getClassByAlias($alias);
 
-        $this->log('Command from ' . $connection->getRemoteAddress() . ": pure.$alias.$path.$method");
+        if (null !== $this->logger) {
+            $this->log(
+                'Command from ' . $connection->getRemoteAddress() .
+                ": pure.$alias.$path.$method(" .
+                join(', ', array_map('json_encode', $args)) .
+                ')'
+            );
+        }
 
         if (!isset($this->stores[$class][$path])) {
             $this->stores[$class][$path] = new $class;
