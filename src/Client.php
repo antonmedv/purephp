@@ -7,7 +7,6 @@
 
 namespace Pure;
 
-use Pure\Exception\ServerException;
 use Pure\Storage\ArrayStorage;
 use Pure\Storage\LifetimeStorage;
 use Pure\Storage\PriorityQueueStorage;
@@ -113,8 +112,11 @@ class Client
 
         if(Server::RESULT === $command[0]) {
             return $command[1];
+        } elseif(Server::EXCEPTION === $command[0]) {
+            $class = $command[1];
+            throw new $class($command[2]);
         } else {
-            throw new ServerException($command[1]);
+            throw new \RuntimeException('Unknown command from server.');
         }
     }
 

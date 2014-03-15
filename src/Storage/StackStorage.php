@@ -7,9 +7,21 @@
 
 namespace Pure\Storage;
 
+use Pure\Helper\Filter;
+use Pure\Server;
+
 class StackStorage extends \SplStack implements StorageInterface
 {
+    use Filter;
+
     const alias = 'stack';
+
+    private $server;
+
+    public function __construct(Server $server)
+    {
+        $this->server = $server;
+    }
 
     public function all()
     {
@@ -22,7 +34,7 @@ class StackStorage extends \SplStack implements StorageInterface
 
     public function clear()
     {
-        while($this->valid()) {
+        while ($this->valid()) {
             $this->pop();
         }
     }

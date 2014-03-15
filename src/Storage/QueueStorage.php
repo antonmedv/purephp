@@ -7,9 +7,21 @@
 
 namespace Pure\Storage;
 
+use Pure\Helper\Filter;
+use Pure\Server;
+
 class QueueStorage extends \SplQueue implements StorageInterface
 {
+    use Filter;
+
     const alias = 'queue';
+
+    private $server;
+
+    public function __construct(Server $server)
+    {
+        $this->server = $server;
+    }
 
     public function all()
     {

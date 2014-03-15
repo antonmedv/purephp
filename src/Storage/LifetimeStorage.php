@@ -7,11 +7,23 @@
 
 namespace Pure\Storage;
 
+use Pure\Helper\Filter;
+use Pure\Server;
+
 class LifetimeStorage implements StorageInterface
 {
+    use Filter;
+
     const alias = 'lifetime';
 
     private $data = [];
+
+    private $server;
+
+    public function __construct(Server $server)
+    {
+        $this->server = $server;
+    }
 
     public function all()
     {
@@ -61,5 +73,10 @@ class LifetimeStorage implements StorageInterface
     {
         unset($this->data[$key]);
         return true;
+    }
+
+    public function count()
+    {
+        return count($this->data);
     }
 } 

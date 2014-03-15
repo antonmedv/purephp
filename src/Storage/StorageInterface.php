@@ -7,8 +7,9 @@
 
 namespace Pure\Storage;
 
-interface StorageInterface
+use Pure\Server;
+
+interface StorageInterface extends \Countable
 {
-    public function all();
-    public function clear();
-} 
+    public function __construct(Server $server);
+}

@@ -12,7 +12,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
-use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 class ClientCommand extends Command
 {
@@ -69,7 +68,7 @@ class ClientCommand extends Command
                 var_dump($result);
 
             } catch (\Exception $e) {
-                $output->writeln('<error>' . $e->getMessage() . '</error>');
+                $output->writeln('<error>' . get_class($e) . ':' . $e->getMessage() . '</error>');
             }
 
         } while (true);

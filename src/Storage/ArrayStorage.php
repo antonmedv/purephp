@@ -7,11 +7,23 @@
 
 namespace Pure\Storage;
 
+use Pure\Helper\Filter;
+use Pure\Server;
+
 class ArrayStorage implements StorageInterface
 {
+    use Filter;
+
     const alias = 'of';
 
     private $data = [];
+
+    private $server;
+
+    public function __construct(Server $server)
+    {
+        $this->server = $server;
+    }
 
     public function all()
     {
@@ -50,4 +62,9 @@ class ArrayStorage implements StorageInterface
         unset($this->data[$key]);
         return true;
     }
-} 
+
+    public function count()
+    {
+        return count($this->data);
+    }
+}

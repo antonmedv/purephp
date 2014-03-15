@@ -7,11 +7,12 @@
 
 namespace Pure;
 
-use Pure\Storage;
 use Pure\Storage\LifetimeStorage;
+use Pure\Storage;
 use React\EventLoop\Factory as LoopFactory;
 use React\Socket\ConnectionInterface;
 use React\Socket\Server as SocketServer;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class Server
 {
@@ -33,6 +34,8 @@ class Server
 
     private $stores = [];
 
+    private $language;
+
     public function __construct($port, $host = '127.0.0.1')
     {
         $this->host = $host;
@@ -43,6 +46,8 @@ class Server
         $this->socket = new SocketServer($this->loop);
         $this->socket->on('connection', array($this, 'onConnection'));
         $this->loop->addPeriodicTimer(1, array($this, 'onTick'));
+
+        $this->language = new ExpressionLanguage();
     }
 
     public function run()
@@ -97,7 +102,7 @@ class Server
         }
 
         if (!isset($this->stores[$class][$path])) {
-            $this->stores[$class][$path] = new $class;
+            $this->stores[$class][$path] = new $class($this);
         }
 
         $call = [$this->stores[$class][$path], $method];
@@ -106,7 +111,7 @@ class Server
             $result = call_user_func_array($call, $args);
             $command = [self::RESULT, $result];
         } catch (\Exception $e) {
-            $command = [self::EXCEPTION, $e->getMessage()];
+            $command = [self::EXCEPTION, get_class($e), $e->getMessage()];
             $this->log('Exception: ' . $e->getMessage());
         }
 
@@ -123,5 +128,20 @@ class Server
     public function setLogger(\Closure $callback)
     {
         $this->logger = $callback;
+    }
+
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+
+    public function getStores()
+    {
+        return $this->stores;
+    }
+
+    public function setStores($stores)
+    {
+        $this->stores = $stores;
     }
 }
