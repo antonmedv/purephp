@@ -7,6 +7,7 @@
 
 namespace Pure;
 
+use Pure\Exception\ServerException;
 use Pure\Storage\ArrayStorage;
 use Pure\Storage\LifetimeStorage;
 use Pure\Storage\PriorityQueueStorage;
@@ -97,7 +98,7 @@ class Client
         $body = json_encode($command) . self::END_OF_COMMAND;
         socket_write($this->socket, $body, strlen($body));
 
-        $data = null;
+        $command = null;
 
         $buffer = '';
         while ($read = socket_read($this->socket, self::READ_SIZE)) {
@@ -105,12 +106,16 @@ class Client
 
             if (strpos($buffer, Server::END_OF_RESULT)) {
                 $chunks = explode(Server::END_OF_RESULT, $buffer, 2);
-                $data = json_decode($chunks[0], true);
+                $command = json_decode($chunks[0], true);
                 break;
             }
         }
 
-        return $data;
+        if(Server::RESULT === $command[0]) {
+            return $command[1];
+        } else {
+            throw new ServerException($command[1]);
+        }
     }
 
     public function close()

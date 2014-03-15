@@ -15,6 +15,10 @@ use React\Socket\Server as SocketServer;
 
 class Server
 {
+    const RESULT = 0;
+
+    const EXCEPTION = 1;
+
     const END_OF_RESULT = 'END_OF_RESULT';
 
     private $port;
@@ -100,12 +104,13 @@ class Server
 
         try {
             $result = call_user_func_array($call, $args);
+            $command = [self::RESULT, $result];
         } catch (\Exception $e) {
-            $result = null;
+            $command = [self::EXCEPTION, $e->getMessage()];
             $this->log('Exception: ' . $e->getMessage());
         }
 
-        $connection->write(json_encode($result) . self::END_OF_RESULT);
+        $connection->write(json_encode($command) . self::END_OF_RESULT);
     }
 
     public function log($message)
