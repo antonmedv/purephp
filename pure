@@ -1,6 +1,7 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
+error_reporting(0);
 Symfony\Component\Debug\ErrorHandler::register(false);
 
 $console = new Symfony\Component\Console\Application('PurePHP', '0.2.0');
