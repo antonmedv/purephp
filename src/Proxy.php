@@ -7,7 +7,7 @@
 
 namespace Pure;
 
-use Pure\Storage\Factory;
+use Pure\Storage;
 
 class Proxy
 {
@@ -23,7 +23,7 @@ class Proxy
     {
         $this->client = $client;
         $this->alias = $alias;
-        $this->reflectionClass = new \ReflectionClass(Factory::getClassByAlias($alias));
+        $this->reflectionClass = new \ReflectionClass(Storage::getClassByAlias($alias));
         $this->path = $path;
     }
 
@@ -32,7 +32,7 @@ class Proxy
         if ($this->reflectionClass->hasMethod($name)) {
             return $this->client->command([$this->alias, $this->path, $name, $arguments]);
         } else {
-            $class = Factory::getClassByAlias($this->alias);
+            $class = Storage::getClassByAlias($this->alias);
             throw new \RuntimeException("Class `{$class}` does not have method `{$name}`.");
         }
     }

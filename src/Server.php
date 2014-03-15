@@ -7,7 +7,7 @@
 
 namespace Pure;
 
-use Pure\Storage\Factory;
+use Pure\Storage;
 use Pure\Storage\LifetimeStorage;
 use React\EventLoop\Factory as LoopFactory;
 use React\Socket\ConnectionInterface;
@@ -81,7 +81,7 @@ class Server
     private function runCommand($command, ConnectionInterface $connection)
     {
         list($alias, $path, $method, $args) = $command;
-        $class = Factory::getClassByAlias($alias);
+        $class = Storage::getClassByAlias($alias);
 
         if (null !== $this->logger) {
             $this->log(
