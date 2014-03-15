@@ -68,7 +68,7 @@ class ClientCommand extends Command
                 var_dump($result);
 
             } catch (\Exception $e) {
-                $output->writeln('<error>' . get_class($e) . ':' . $e->getMessage() . '</error>');
+                $output->writeln('<error>' . get_class($e) . ": \n" . $e->getMessage() . '</error>');
             }
 
         } while (true);
