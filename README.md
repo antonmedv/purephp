@@ -8,11 +8,9 @@ Via Composer:
 composer require elfet/pure:~0.1
 ```
 
-Via Phar file:
+Via Phar file: [Download pure.phar](http://elfet.ru/purephp/pure.phar)
 
-[pure.phar](http://elfet.ru/purephp/pure.phar)
-
-After download pure.phar ru next commands:
+After downloading pure.phar run next commands:
 
 ```
 mv pure.phar /usr/local/bin/pure
