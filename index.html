@@ -34,7 +34,8 @@ layout: nil
         </ul>
     </header>
     <section>
-        {% include README.md %}
+        {% capture readme %}{% include README.md %}{% endcapture %}
+        {{ readme | markdownify }}
     </section>
     <footer>
         <p>This project is maintained by <a href="https://github.com/elfet">elfet</a></p>
