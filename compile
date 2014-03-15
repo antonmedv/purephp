@@ -18,6 +18,7 @@ $finder = new Symfony\Component\Finder\Finder();
 $finder->files()
     ->ignoreVCS(true)
     ->name('*.php')
+    ->name('*.json')
     ->name('pure')
     ->exclude('phpunit')
     ->exclude('Tests')
