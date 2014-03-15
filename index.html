@@ -1,6 +1,6 @@
 <!doctype html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>PurePHP Key-Value Storage</title>
@@ -11,180 +11,38 @@
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
+</head>
+<body>
+<div class="wrapper">
+    <header>
         <h1>PurePHP</h1>
+
         <p>PurePHP Key-Value Storage</p>
 
-        <p class="view"><a href="https://github.com/elfet/purephp">View the Project on GitHub <small>elfet/purephp</small></a></p>
+        <p class="view"><a href="https://github.com/elfet/purephp">View the Project on GitHub
+            <small>elfet/purephp</small>
+        </a></p>
 
 
         <ul>
-          <li><a href="https://elfet.github.io/purephp/pure.phar">Download <strong>PHAR</strong></a></li>
-          <li><a href="https://github.com/elfet/purephp/star">&nbsp;<strong>Star</strong></a></li>
-          <li><a href="https://github.com/elfet/purephp">View On <strong>GitHub</strong></a></li>
+            <li><a href="https://elfet.github.io/purephp/pure.phar">Download <strong>PHAR</strong></a></li>
+            <li><a href="https://github.com/elfet/purephp/star">&nbsp;<strong>Star</strong></a></li>
+            <li><a href="https://github.com/elfet/purephp">View On <strong>GitHub</strong></a></li>
         </ul>
-      </header>
-      <section>
-        <h1>
-<a name="purephp-key-value-storage" class="anchor" href="#purephp-key-value-storage"><span class="octicon octicon-link"></span></a>PurePHP Key-Value Storage</h1>
-
-<p>This is simple key-value storage written on PHP.</p>
-
-<h2>
-<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
-
-<p>Via Composer:</p>
-
-<pre><code>composer require elfet/pure:~0.1
-</code></pre>
-
-<p>Via Phar file:</p>
-
-<pre><code>Download link will be later.
-</code></pre>
-
-<p><a href="https://github.com/elfet/purephp/archive/v0.1.1.zip">Download zip</a> archive of repository, extract it and run next commands:</p>
-
-<pre><code>composer install --dev
-php compile
-mv pure.phar /usr/local/bin/pure
-chmod +x /usr/local/bin/pure
-</code></pre>
-
-<h2>
-<a name="quick-guide" class="anchor" href="#quick-guide"><span class="octicon octicon-link"></span></a>Quick Guide</h2>
-
-<p>Start PurePHP by this command:</p>
-
-<pre><code>pure start &amp;
-</code></pre>
-
-<p>Now PurePHP server is running. Run this command:</p>
-
-<pre><code>pure client
-</code></pre>
-
-<p>Now you can test PurePHP by simple commands like this:</p>
-
-<pre><code>&gt; pure.stack.test.push('hello wolrd!')
-bool(true)
-&gt; pure.stack.test.pop()
-string(12) "hello wolrd!"
-&gt;
-</code></pre>
-
-<p>In pure console you can write commands on <a href="https://github.com/symfony/expression-language">Expression Language</a>. To exit from console type <code>exit</code> command.</p>
-
-<h2>
-<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
-
-<h3>
-<a name="connection-to-purephp-server" class="anchor" href="#connection-to-purephp-server"><span class="octicon octicon-link"></span></a>Connection to PurePHP server</h3>
-
-<div class="highlight highlight-php"><pre><span class="nv">$port</span> <span class="o">=</span> <span class="mi">1337</span><span class="p">;</span> <span class="c1">// Default port value</span>
-<span class="nv">$host</span> <span class="o">=</span> <span class="s1">'127.0.0.1'</span><span class="p">;</span> <span class="c1">// Default host value</span>
-<span class="c1">//...</span>
-<span class="nv">$pure</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Pure\Clent</span><span class="p">(</span><span class="nv">$port</span><span class="p">,</span> <span class="nv">$host</span><span class="p">);</span>
-</pre></div>
-
-<h3>
-<a name="storages" class="anchor" href="#storages"><span class="octicon octicon-link"></span></a>Storages</h3>
-
-<p>PurePHP provide diffrent types on stogares. All supported storages are in <a href="https://github.com/elfet/purephp/tree/master/src/Storage">src/Storage</a>. You can access them by next methods and work with them like you work with them directly.</p>
-
-<p>Every storage has separate collection namespace. So you can have for different storages same collection names.
-You do not need to manualy create any collection. They will be automatically create at first access.</p>
-
-<div class="highlight highlight-php"><pre><span class="nv">$pure</span><span class="o">-&gt;</span><span class="na">of</span><span class="p">(</span><span class="s1">'collection'</span><span class="p">)</span><span class="o">-&gt;...</span>
-<span class="nv">$pure</span><span class="o">-&gt;</span><span class="na">stack</span><span class="p">(</span><span class="s1">'collection'</span><span class="p">)</span><span class="o">-&gt;...</span>
-<span class="nv">$pure</span><span class="o">-&gt;</span><span class="na">queue</span><span class="p">(</span><span class="s1">'collection'</span><span class="p">)</span><span class="o">-&gt;...</span>
-<span class="nv">$pure</span><span class="o">-&gt;</span><span class="na">prioriry</span><span class="p">(</span><span class="s1">'collection'</span><span class="p">)</span><span class="o">-&gt;...</span>
-<span class="nv">$pure</span><span class="o">-&gt;</span><span class="na">lifetime</span><span class="p">(</span><span class="s1">'collection'</span><span class="p">)</span><span class="o">-&gt;...</span>
-</pre></div>
-
-<p>Or you can access them by magic methods.</p>
-
-<div class="highlight highlight-php"><pre><span class="nv">$pure</span><span class="o">-&gt;</span><span class="na">of</span><span class="o">-&gt;</span><span class="na">collection</span><span class="o">-&gt;...</span>
-<span class="nv">$pure</span><span class="o">-&gt;</span><span class="na">stack</span><span class="o">-&gt;</span><span class="na">collection</span><span class="o">-&gt;...</span>
-<span class="nv">$pure</span><span class="o">-&gt;</span><span class="na">queue</span><span class="o">-&gt;</span><span class="na">collection</span><span class="o">-&gt;...</span>
-<span class="c1">//...</span>
-</pre></div>
-
-<h3>
-<a name="array-storage--of" class="anchor" href="#array-storage--of"><span class="octicon octicon-link"></span></a>Array Storage <code>-&gt;of</code>
-</h3>
-
-<p>This is simple storage what uses php array to store your data. 
-To store date in collection use <code>push</code> method:</p>
-
-<div class="highlight highlight-php"><pre><span class="nv">$pure</span><span class="o">-&gt;</span><span class="na">of</span><span class="p">(</span><span class="s1">'collection'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">push</span><span class="p">([</span><span class="s1">'hello'</span> <span class="o">=&gt;</span> <span class="s1">'world'</span><span class="p">]);</span>
-</pre></div>
-
-<p>Array Storage uses <code>array_merge</code> function.</p>
-
-<p>To get value by key from collection use <code>get</code> method:</p>
-
-<div class="highlight highlight-php"><pre><span class="nv">$value</span> <span class="o">=</span> <span class="nv">$pure</span><span class="o">-&gt;</span><span class="na">of</span><span class="p">(</span><span class="s1">'collection'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">'hello'</span><span class="p">);</span> <span class="c1">// will return 'world'.</span>
-</pre></div>
-
-<p>To receive all elements use <code>all</code> method:</p>
-
-<div class="highlight highlight-php"><pre><span class="nv">$all</span> <span class="o">=</span> <span class="nv">$pure</span><span class="o">-&gt;</span><span class="na">of</span><span class="p">(</span><span class="s1">'collection'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">all</span><span class="p">();</span>
-</pre></div>
-
-<p>To delete all elements use <code>clear</code> method:</p>
-
-<div class="highlight highlight-php"><pre><span class="nv">$all</span> <span class="o">=</span> <span class="nv">$pure</span><span class="o">-&gt;</span><span class="na">of</span><span class="p">(</span><span class="s1">'collection'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">clear</span><span class="p">();</span>
-</pre></div>
-
-<p>You can check if key exist by <code>has</code> method, and delete element by <code>delete</code> method.</p>
-
-<h3>
-<a name="stack-storage--stack" class="anchor" href="#stack-storage--stack"><span class="octicon octicon-link"></span></a>Stack Storage <code>-&gt;stack</code>
-</h3>
-
-<p>This storage use <code>SplStack</code> to store your data.</p>
-
-<p>You can use all <code>SplStack</code> methods and also <code>all</code>, <code>clear</code> methods.</p>
-
-<h3>
-<a name="queue-storage--queue" class="anchor" href="#queue-storage--queue"><span class="octicon octicon-link"></span></a>Queue Storage <code>-&gt;queue</code>
-</h3>
-
-<p>This storage use <code>SplQueue</code> to store your data.</p>
-
-<p>You can use <code>SplQueue</code> methods and also <code>all</code>, <code>clear</code> methods.</p>
-
-<p><code>SplQueue</code> uses <code>enqueue</code> and <code>deenqueue</code> to push and pop from queue. In QueueStorage your can use <code>push</code> and <code>pop</code> methods to do this.</p>
-
-<h3>
-<a name="priority-queue-storage--priority" class="anchor" href="#priority-queue-storage--priority"><span class="octicon octicon-link"></span></a>Priority Queue Storage <code>-&gt;priority</code>
-</h3>
-
-<p>This storage use <code>SplPriorityQueue</code> to store your data.</p>
-
-<p>You can use all <code>SplPriorityQueue</code> methods and also <code>all</code>, <code>clear</code> methods.</p>
-
-<h3>
-<a name="lifetime-storage--lifetime" class="anchor" href="#lifetime-storage--lifetime"><span class="octicon octicon-link"></span></a>Lifetime Storage <code>-&gt;lifetime</code>
-</h3>
-
-<p>In this storage you can store data which need to be deleted after some period. Life time in seconds.</p>
-
-<div class="highlight highlight-php"><pre><span class="nv">$pure</span><span class="o">-&gt;</span><span class="na">lifetime</span><span class="p">(</span><span class="s1">'collection'</span><span class="p">)</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span><span class="p">,</span> <span class="nv">$lifetime</span><span class="p">);</span>
-</pre></div>
-
-<p>You can get all elements by <code>all</code> method, check if key exist by <code>has</code> method, and delete element by <code>delete</code> method.</p>
-      </section>
-      <footer>
+    </header>
+    <section>
+        {% include README.md %}
+    </section>
+    <footer>
         <p>This project is maintained by <a href="https://github.com/elfet">elfet</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
-    </div>
-    <script src="javascripts/scale.fix.js"></script>
-    
-  </body>
+
+        <p>
+            <small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a>
+            </small>
+        </p>
+    </footer>
+</div>
+<script src="javascripts/scale.fix.js"></script>
+
+</body>
 </html>
