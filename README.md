@@ -10,18 +10,16 @@ composer require elfet/pure:~0.1
 
 Via Phar file:
 
-```
-Download link will be later.
-```
+[pure.phar](http://elfet.ru/purephp/pure.phar)
 
-[Download zip](https://github.com/elfet/purephp/archive/v0.1.1.zip) archive of repository, extract it and run next commands:
+After download pure.phar ru next commands:
 
 ```
-composer install --dev
-php compile
 mv pure.phar /usr/local/bin/pure
 chmod +x /usr/local/bin/pure
 ```
+
+You can update pure.phar by `pure update` command.
 
 ## Quick Guide
 Start PurePHP by this command:
