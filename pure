@@ -11,7 +11,7 @@ $console->add(new Pure\Console\ClientCommand());
 
 $updateCommand = new KevinGH\Amend\Command('update');
 $updateCommand->setDescription('Updates pure.phar to the latest version.');
-$updateCommand->setManifestUri('https://raw.github.com/elfet/purephp/master/manifest.json');
+$updateCommand->setManifestUri('https://elfet.ru/purephp/manifest.json');
 $console->add($updateCommand);
 $console->getHelperSet()->set(new KevinGH\Amend\Helper());
 
