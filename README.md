@@ -44,6 +44,8 @@ string(12) "hello wolrd!"
 
 In pure console you can write commands on [Expression Language](https://github.com/symfony/expression-language). To exit from console type `exit` command.
 
+To update PurePHP to latest version run command `pure update`.
+
 ## Documentation
 
 ### Connection to PurePHP server
@@ -133,3 +135,23 @@ $pure->lifetime('collection')->set($key, $value, $lifetime);
 ```
 
 You can get all elements by `all` method, check if key exist by `has` method, and delete element by `delete` method.
+
+### Filtering
+
+Every storage support function `filter`.
+
+Example:
+
+```php
+// Get all elements that more than a 100.
+$result = $pure->queue('collection')->filter('value > 100');
+
+// Limit to 10.
+$result = $pure->prioriry('collection')->filter('value > 100', 10);
+
+// Complex expression.
+$result = $pure->of('collection')->filter('value["year"] > 2000 and value["name"] matches "/term/"');
+```
+
+Filter rules writen on [Expression Language](https://github.com/symfony/expression-language) and cached on server. 
+In expression available two variables: key and value.
