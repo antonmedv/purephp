@@ -1,6 +1,12 @@
 [
     {
         "name": "pure.phar",
+        "sha1": "1773c11c5ac5d02e4a6df1a926df93061634f19d",
+        "url": "http://elfet.ru/purephp/pure.phar",
+        "version": "0.2.1"
+    },
+    {
+        "name": "pure.phar",
         "sha1": "206d25bd2af7c87988640a7abb17f00113914d13",
         "url": "http://elfet.ru/purephp/pure.phar",
         "version": "0.2.0"
