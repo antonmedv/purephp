@@ -35,11 +35,12 @@ pure client
 Now you can test PurePHP by simple commands like this:
 
 ```
-> pure.stack.test.push('hello wolrd!')
+> pure.queue.collection.push('hello')
 bool(true)
-> pure.stack.test.pop()
-string(12) "hello wolrd!"
->
+> pure.queue.collection.push('world')
+bool(true)
+> pure.queue.collection.pop() ~ ' ' ~ pure.queue.collection.pop()
+string(11) "hello world"
 ```
 
 In pure console you can write commands on [Expression Language](https://github.com/symfony/expression-language). To exit from console type `exit` command.
