@@ -1,5 +1,5 @@
 # PurePHP Key-Value Storage
-This is simple key-value storage written on PHP.
+This is simple key-value storage written on PHP. It does not use files, or other database, just pure PHP.
 
 ## Installation
 Via Composer:
