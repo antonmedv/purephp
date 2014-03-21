@@ -156,3 +156,12 @@ $result = $pure->of('collection')->filter('value["year"] > 2000 and value["name"
 
 Filter rules writen on [Expression Language](https://github.com/symfony/expression-language) and cached on server. 
 In expression available two variables: key and value.
+
+
+## TODO
+
+* Unit Tests
+* Dump to file
+* Load from file
+* Replication 
+* Sharding 
