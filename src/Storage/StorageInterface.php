@@ -7,9 +7,6 @@
 
 namespace Pure\Storage;
 
-use Pure\Server;
-
-interface StorageInterface extends \Countable
+interface StorageInterface extends \Iterator, \Countable
 {
-    public function __construct(Server $server);
 }

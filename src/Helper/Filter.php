@@ -7,26 +7,37 @@
 
 namespace Pure\Helper;
 
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+
 trait Filter
 {
+    /**
+     * Write filter string in ExpressionLanguage.
+     * In expression you can use next variables:
+     *   `key` - current element key.
+     *   `value` - current element value.
+     * 
+     * Examples:
+     *   value in ['good_customers', 'collaborator']
+     *   key > 100 and value not in ["misc"]
+     * 
+     * @link http://symfony.com/doc/current/components/expression_language/introduction.html
+     * @param string $filter 
+     * @param null|int $limit How many elements to search.
+     * @return array|null
+     */
     public function filter($filter, $limit = null)
     {
-        if (0 === $limit) {
-            return null;
-        }
-
-        if ($this instanceof \Iterator) {
-            $data = $this;
-        } elseif (isset($this->data) && is_array($this->data)) {
-            $data = $this->data;
-        } else {
-            throw new \RuntimeException('Can not filter this storage.');
+        static $language = null;
+        
+        if (null === $language) {
+            $language = new ExpressionLanguage();
         }
 
         $count = 0;
         $result = [];
-        foreach ($data as $key => $value) {
-            $pass = $this->server->getLanguage()->evaluate($filter, [
+        foreach ($this as $key => $value) {
+            $pass = $language->evaluate($filter, [
                 'key' => $key,
                 'value' => $value,
             ]);

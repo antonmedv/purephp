@@ -7,33 +7,53 @@
 
 namespace Pure;
 
-use Pure\Storage;
-
 class Proxy
 {
+    /**
+     * @var Client
+     */
     private $client;
 
-    private $alias;
+    /**
+     * @var string
+     */
+    private $class;
 
+    /**
+     * @var \ReflectionClass
+     */
     private $reflectionClass;
 
-    private $path;
+    /**
+     * @var string
+     */
+    private $name;
 
-    public function __construct(Client $client, $alias, $path)
+    /**
+     * @param Client $client
+     * @param string $class
+     * @param string $name
+     */
+    public function __construct(Client $client, $class, $name)
     {
         $this->client = $client;
-        $this->alias = $alias;
-        $this->reflectionClass = new \ReflectionClass(Storage::getClassByAlias($alias));
-        $this->path = $path;
+        $this->class = $class;
+        $this->reflectionClass = new \ReflectionClass($class);
+        $this->name = $name;
     }
 
-    public function __call($name, $arguments)
+    /**
+     * @param string $method
+     * @param array $arguments
+     * @return mixed
+     * @throws \RuntimeException
+     */
+    public function __call($method, $arguments)
     {
-        if ($this->reflectionClass->hasMethod($name)) {
-            return $this->client->command([$this->alias, $this->path, $name, $arguments]);
+        if ($this->reflectionClass->hasMethod($method)) {
+            return $this->client->command([Client::STORAGE_COMMAND, $this->class, $this->name, $method, $arguments]);
         } else {
-            $class = Storage::getClassByAlias($this->alias);
-            throw new \RuntimeException("Class `{$class}` does not have method `{$name}`.");
+            throw new \RuntimeException("Class `{$this->class}` does not have method `{$method}`.");
         }
     }
 }

@@ -7,21 +7,40 @@
 
 namespace Pure\Proxy;
 
+use Pure\Client;
 use Pure\Proxy;
 
+/**
+ * Class help to generate proxy object when accessing pure storage like what `$pure->stack->name->pop()`. 
+ */
 class Generator
 {
+    /**
+     * @var Client
+     */
     private $client;
+
+    /**
+     * @var string
+     */
     private $alias;
 
-    public function __construct($client, $alias)
+    /**
+     * @param Client $client
+     * @param $alias
+     */
+    public function __construct(Client $client, $alias)
     {
         $this->client = $client;
         $this->alias = $alias;
     }
 
-    public function __get($path)
+    /**
+     * @param $name
+     * @return \Pure\Storage\StorageInterface
+     */
+    public function __get($name)
     {
-        return new Proxy($this->client, $this->alias, $path);
+        return $this->client->{$this->alias}($name);
     }
 }

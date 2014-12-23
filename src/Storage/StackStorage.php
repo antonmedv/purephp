@@ -7,35 +7,10 @@
 
 namespace Pure\Storage;
 
-use Pure\Helper\Filter;
-use Pure\Server;
+use Pure\Helper;
 
 class StackStorage extends \SplStack implements StorageInterface
 {
-    use Filter;
-
-    const alias = 'stack';
-
-    private $server;
-
-    public function __construct(Server $server)
-    {
-        $this->server = $server;
-    }
-
-    public function all()
-    {
-        $array = [];
-        foreach ($this as $item) {
-            $array[] = $item;
-        }
-        return $array;
-    }
-
-    public function clear()
-    {
-        while ($this->valid()) {
-            $this->pop();
-        }
-    }
+    use Helper\All;
+    use Helper\Filter;
 }

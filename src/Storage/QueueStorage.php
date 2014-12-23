@@ -7,43 +7,28 @@
 
 namespace Pure\Storage;
 
-use Pure\Helper\Filter;
-use Pure\Server;
+use Pure\Helper;
 
 class QueueStorage extends \SplQueue implements StorageInterface
 {
-    use Filter;
+    use Helper\All;
+    use Helper\Filter;
 
-    const alias = 'queue';
-
-    private $server;
-
-    public function __construct(Server $server)
-    {
-        $this->server = $server;
-    }
-
-    public function all()
-    {
-        $array = [];
-        foreach ($this as $item) {
-            $array[] = $item;
-        }
-        return $array;
-    }
-
-    public function clear()
-    {
-        while ($this->valid()) {
-            $this->pop();
-        }
-    }
-
+    /**
+     * Dequeue queue.
+     * 
+     * @return mixed
+     */
     public function pop()
     {
         return $this->dequeue();
     }
 
+    /**
+     * Enqueue queue.
+     * 
+     * @param mixed $value
+     */
     public function push($value)
     {
         $this->enqueue($value);

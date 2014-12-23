@@ -7,64 +7,52 @@
 
 namespace Pure\Storage;
 
-use Pure\Helper\Filter;
-use Pure\Server;
+use Pure\Helper;
 
-class ArrayStorage implements StorageInterface
+class ArrayStorage extends \ArrayIterator implements StorageInterface
 {
-    use Filter;
+    use Helper\All;
+    use Helper\Filter;
 
-    const alias = 'of';
-
-    private $data = [];
-
-    private $server;
-
-    public function __construct(Server $server)
-    {
-        $this->server = $server;
-    }
-
-    public function all()
-    {
-        return $this->data;
-    }
-
-    public function clear()
-    {
-        unset($this->data);
-        $this->data = [];
-        return true;
-    }
-
+    /**
+     * @param array $array
+     */
     public function push($array)
     {
-        $this->data = array_merge($this->data, (array)$array);
-        return true;
+        foreach ((array)$array as $key => $value) {
+            $this[$key] = $value;
+        }
     }
 
+    /**
+     * @param mixed $key
+     * @return null
+     */
     public function get($key)
     {
         if ($this->has($key)) {
-            return $this->data[$key];
+            return $this[$key];
         } else {
             return null;
         }
     }
 
+    /**
+     * @param mixed $key
+     * @return bool
+     */
     public function has($key)
     {
-        return isset($this->data[$key]);
+        return isset($this[$key]);
     }
 
+    /**
+     * Delete element by key.
+     *
+     * @param mixed $key
+     */
     public function delete($key)
     {
-        unset($this->data[$key]);
-        return true;
-    }
-
-    public function count()
-    {
-        return count($this->data);
+        unset($this[$key]);
     }
 }

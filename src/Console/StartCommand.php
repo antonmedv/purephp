@@ -7,6 +7,7 @@
 
 namespace Pure\Console;
 
+use Pure\Server;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -14,6 +15,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class StartCommand extends Command
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this
@@ -23,16 +27,18 @@ class StartCommand extends Command
             ->addOption('host', null, InputOption::VALUE_OPTIONAL, 'Host address', '127.0.0.1');
     }
 
-
+    /**
+     * {@inheritdoc}
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($output->isVerbose()) {
+        if (OutputInterface::VERBOSITY_VERBOSE <= $output->getVerbosity()) {
             $output->writeln('<info>PurePHP server started.</info>');
         }
 
-        $server = new \Pure\Server($input->getOption('port'), $input->getOption('host'));
+        $server = new Server($input->getOption('port'), $input->getOption('host'));
 
-        if ($output->isDebug()) {
+        if (OutputInterface::VERBOSITY_DEBUG <= $output->getVerbosity()) {
             $server->setLogger(function ($log) use ($output) {
                 $output->writeln($log);
             });
@@ -40,4 +46,4 @@ class StartCommand extends Command
 
         $server->run();
     }
-} 
+}

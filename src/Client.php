@@ -7,24 +7,36 @@
 
 namespace Pure;
 
-use Pure\Storage\ArrayStorage;
-use Pure\Storage\LifetimeStorage;
-use Pure\Storage\PriorityQueueStorage;
-use Pure\Storage\QueueStorage;
-use Pure\Storage\StackStorage;
-
 class Client
 {
+    const STORAGE_COMMAND = 1;
+    
+    const DELETE_COMMAND = 2;
+    
     const END_OF_COMMAND = 'END_OF_COMMAND';
 
     const READ_SIZE = 4096;
 
-    private $host;
-
+    /**
+     * @var int
+     */
     private $port;
 
+    /**
+     * @var string
+     */
+    private $host;
+
+    /**
+     * @var resource
+     */
     private $socket;
 
+    /**
+     * @param int $port
+     * @param string $host
+     * @throws \RuntimeException
+     */
     public function __construct($port, $host = '127.0.0.1')
     {
         $this->host = $host;
@@ -43,55 +55,71 @@ class Client
     }
 
     /**
-     * @param $path
-     * @return ArrayStorage
+     * @param string $name
+     * @return \Pure\Storage\ArrayStorage
      */
-    public function of($path)
+    public function map($name)
     {
-        return new Proxy($this, ArrayStorage::alias, $path);
+        return new Proxy($this, 'Pure\Storage\ArrayStorage', $name);
     }
 
     /**
-     * @param $path
-     * @return LifetimeStorage
+     * @param string $name
+     * @return \Pure\Storage\PriorityQueueStorage
      */
-    public function lifetime($path)
+    public function priority($name)
     {
-        return new Proxy($this, LifetimeStorage::alias, $path);
+        return new Proxy($this, 'Pure\Storage\PriorityQueueStorage', $name);
     }
 
     /**
-     * @param $path
-     * @return PriorityQueueStorage
+     * @param string $name
+     * @return \Pure\Storage\QueueStorage
      */
-    public function priority($path)
+    public function queue($name)
     {
-        return new Proxy($this, PriorityQueueStorage::alias, $path);
+        return new Proxy($this, 'Pure\Storage\QueueStorage', $name);
     }
 
     /**
-     * @param $path
-     * @return QueueStorage
+     * @param string $name
+     * @return \Pure\Storage\StackStorage
      */
-    public function queue($path)
+    public function stack($name)
     {
-        return new Proxy($this, QueueStorage::alias, $path);
+        return new Proxy($this, 'Pure\Storage\StackStorage', $name);
     }
 
     /**
-     * @param $path
-     * @return StackStorage
+     * @param string $alias
+     * @return Proxy\Generator
+     * @throws \RuntimeException
      */
-    public function stack($path)
+    public function __get($alias)
     {
-        return new Proxy($this, StackStorage::alias, $path);
+        if (in_array($alias, ['map', 'priority', 'queue', 'stack'], true)) {
+            return new Proxy\Generator($this, $alias);
+        } else {
+            throw new \RuntimeException("There are no method `$alias` in client class.");
+        }
     }
 
-    public function __get($name)
+    /**
+     * Delete storage on server.
+     * 
+     * @param string $name
+     * @return bool
+     */
+    public function delete($name)
     {
-        return new Proxy\Generator($this, $name);
+        return $this->command([self::DELETE_COMMAND, $name]);
     }
 
+    /**
+     * @param array $command
+     * @return mixed
+     * @throws \RuntimeException
+     */
     public function command($command)
     {
         $body = json_encode($command) . self::END_OF_COMMAND;
@@ -110,9 +138,9 @@ class Client
             }
         }
 
-        if(Server::RESULT === $command[0]) {
+        if (Server::RESULT === $command[0]) {
             return $command[1];
-        } elseif(Server::EXCEPTION === $command[0]) {
+        } elseif (Server::EXCEPTION === $command[0]) {
             $class = $command[1];
             throw new $class($command[2]);
         } else {
@@ -120,6 +148,9 @@ class Client
         }
     }
 
+    /**
+     * Close socket.
+     */
     public function close()
     {
         socket_close($this->socket);

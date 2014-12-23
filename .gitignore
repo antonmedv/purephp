@@ -1,5 +1,4 @@
 vendor/
 .idea/
-pages/
 composer.lock
 pure.phar

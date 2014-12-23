@@ -7,12 +7,9 @@
 
 namespace Pure;
 
-use Pure\Storage\LifetimeStorage;
-use Pure\Storage;
 use React\EventLoop\Factory as LoopFactory;
-use React\Socket\ConnectionInterface;
 use React\Socket\Server as SocketServer;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use React\Socket\ConnectionInterface;
 
 class Server
 {
@@ -22,20 +19,40 @@ class Server
 
     const END_OF_RESULT = 'END_OF_RESULT';
 
+    /**
+     * @var int
+     */
     private $port;
 
+    /**
+     * @var string
+     */
     private $host;
 
+    /**
+     * @var \Closure
+     */
     private $logger;
 
+    /**
+     * @var \React\EventLoop\LoopInterface
+     */
     private $loop;
 
+    /**
+     * @var SocketServer
+     */
     private $socket;
 
-    private $stores = [];
+    /**
+     * @var Storage\StorageInterface[]
+     */
+    private $storages = [];
 
-    private $language;
-
+    /**
+     * @param int $port
+     * @param string $host
+     */
     public function __construct($port, $host = '127.0.0.1')
     {
         $this->host = $host;
@@ -45,11 +62,11 @@ class Server
 
         $this->socket = new SocketServer($this->loop);
         $this->socket->on('connection', array($this, 'onConnection'));
-        $this->loop->addPeriodicTimer(1, array($this, 'onTick'));
-
-        $this->language = new ExpressionLanguage();
     }
 
+    /**
+     * Start event loop.
+     */
     public function run()
     {
         $this->log("Server listening on {$this->host}:{$this->port}");
@@ -57,6 +74,11 @@ class Server
         $this->loop->run();
     }
 
+    /**
+     * On every new connection add event handler to receive commands from clients.
+     *
+     * @param ConnectionInterface $connection
+     */
     public function onConnection(ConnectionInterface $connection)
     {
         $this->log('New connection from ' . $connection->getRemoteAddress());
@@ -78,46 +100,106 @@ class Server
         });
     }
 
-    public function onTick()
-    {
-        if (isset($this->stores[LifetimeStorage::class])) {
-            foreach ($this->stores[LifetimeStorage::class] as $store) {
-                $store->clearOutdated();
-            }
-        }
-    }
-
+    /**
+     * Detect and run command received from client.
+     * @param array $command
+     * @param ConnectionInterface $connection
+     */
     private function runCommand($command, ConnectionInterface $connection)
     {
-        list($alias, $path, $method, $args) = $command;
-        $class = Storage::getClassByAlias($alias);
+        try {
+
+            $commandType = array_shift($command);
+
+            switch ($commandType) {
+
+                case Client::STORAGE_COMMAND:
+                    $result = $this->runStorageCommand($command, $connection);
+                    break;
+
+                case Client::DELETE_COMMAND:
+                    $result = $this->runDeleteCommand($command, $connection);
+                    break;
+
+                default:
+                    throw new \RuntimeException("Unknown command type `$commandType`.");
+            }
+
+        } catch (\Exception $e) {
+
+            $result = [self::EXCEPTION, get_class($e), $e->getMessage()];
+            $this->log('Exception: ' . $e->getMessage());
+
+        }
+
+        $connection->write(json_encode($result) . self::END_OF_RESULT);
+    }
+
+
+    /**
+     * Runs storage command.
+     * Command represented as array of next structure [class, name, method, args] where
+     *  class - storage full class name,
+     *  name - name of storage to store (every storage has to have unique name),
+     *  method - method of storage to call,
+     *  args - arguments for that method.
+     *
+     * @param array $command
+     * @param ConnectionInterface $connection
+     * @return array
+     * @throws \RuntimeException
+     */
+    private function runStorageCommand($command, ConnectionInterface $connection)
+    {
+        list($class, $name, $method, $args) = $command;
 
         if (null !== $this->logger) {
             $this->log(
                 'Command from ' . $connection->getRemoteAddress() .
-                ": pure.$alias.$path.$method(" .
+                ": [$name] $class::$method(" .
                 join(', ', array_map('json_encode', $args)) .
                 ')'
             );
         }
 
-        if (!isset($this->stores[$class][$path])) {
-            $this->stores[$class][$path] = new $class($this);
+        if (isset($this->storages[$name])) {
+            if (!$this->storages[$name] instanceof $class) {
+                throw new \RuntimeException("Storage `$name` has type `" . get_class($this->storages[$name]) . "` (you request `$class`)");
+            }
+        } else {
+            $this->storages[$name] = new $class();
         }
 
-        $call = [$this->stores[$class][$path], $method];
+        $call = [$this->storages[$name], $method];
+        $result = call_user_func_array($call, $args);
 
-        try {
-            $result = call_user_func_array($call, $args);
-            $command = [self::RESULT, $result];
-        } catch (\Exception $e) {
-            $command = [self::EXCEPTION, get_class($e), $e->getMessage()];
-            $this->log('Exception: ' . $e->getMessage());
-        }
-
-        $connection->write(json_encode($command) . self::END_OF_RESULT);
+        return [self::RESULT, $result];
     }
 
+    /**
+     * Run delete storage command.
+     * 
+     * @param array $command
+     * @param ConnectionInterface $connection
+     * @return array
+     */
+    private function runDeleteCommand($command, ConnectionInterface $connection)
+    {
+        list($name) = $command;
+
+        if (isset($this->storages[$name])) {
+            unset($this->storages[$name]);
+            return [self::RESULT, true];
+        } else {
+            return [self::RESULT, false];
+        }
+    }
+
+    /**
+     * Before logging massage set logger with `setLogger` method.
+     *
+     * @param string $message
+     */
     public function log($message)
     {
         if (is_callable($this->logger)) {
@@ -125,23 +207,37 @@ class Server
         }
     }
 
+    /**
+     * @param callable $callback
+     */
     public function setLogger(\Closure $callback)
     {
         $this->logger = $callback;
     }
 
-    public function getLanguage()
+    /**
+     * @param string $name
+     * @return Storage\StorageInterface
+     */
+    public function getStorage($name)
     {
-        return $this->language;
+        return $this->storages[$name];
     }
 
-    public function getStores()
+    /**
+     * @param string $name
+     * @param mixed|Storage\StorageInterface $storage
+     */
+    public function setStorage($name, $storage)
     {
-        return $this->stores;
+        $this->storages[$name] = $storage;
     }
 
-    public function setStores($stores)
+    /**
+     * @return \React\EventLoop\LoopInterface
+     */
+    public function getLoop()
     {
-        $this->stores = $stores;
+        return $this->loop;
     }
 }

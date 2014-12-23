@@ -1,18 +1,10 @@
+#!/usr/bin/env php
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
-error_reporting(0);
 Symfony\Component\Debug\ErrorHandler::register(false);
 
-$console = new Symfony\Component\Console\Application('PurePHP', '0.2.1');
-
+$console = new Symfony\Component\Console\Application('PurePHP', '1.0.0');
 $console->add(new Pure\Console\StartCommand());
 $console->add(new Pure\Console\ClientCommand());
-
-$updateCommand = new KevinGH\Amend\Command('update');
-$updateCommand->setDescription('Updates pure.phar to the latest version.');
-$updateCommand->setManifestUri('https://raw.github.com/elfet/purephp/master/manifest.json');
-$console->add($updateCommand);
-$console->getHelperSet()->set(new KevinGH\Amend\Helper());
-
 $console->run();
