@@ -8,6 +8,10 @@ Via Composer:
 composer require elfet/pure
 ```
 
+Now you can run pure like this: `php vendor/bin/pure`
+
+Or you can install PurePHP globally to run pure by `pure` command.
+
 ## Quick Guide
 Start PurePHP by this command:
 
@@ -75,13 +79,13 @@ $pure->map('collection')->push(['hello' => 'world']);
 
 To get value by key from collection use `get` method:
 ```php
-$value = $pure->of('collection')->get('hello'); // will return 'world'.
+$value = $pure->map('collection')->get('hello'); // will return 'world'.
 ```
 
 To receive all elements use `all` method:
 ```php
-$all = $pure->of('collection')->all();
-``
+$all = $pure->map('collection')->all();
+```
 
 You can check if key exist by `has` method, and delete element by `delete` method.
 
