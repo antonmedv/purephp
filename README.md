@@ -1,4 +1,6 @@
 # PurePHP Key-Value Storage
+[![Build Status](https://travis-ci.org/elfet/purephp.svg?branch=master)](https://travis-ci.org/elfet/purephp)
+
 This is simple key-value storage written on PHP. It does not use files, or other database, just pure PHP.
 
 ## Installation
