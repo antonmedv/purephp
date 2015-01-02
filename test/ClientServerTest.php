@@ -47,15 +47,4 @@ class ClientServerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(2, $client->queue('test')->pop());
         $this->assertEquals(3, $client->queue('test')->pop());
     }
-
-    public function testCloseConnection()
-    {
-        $client = new Client(self::PORT);
-
-        self::tearDownAfterClass();
-
-        sleep(1);
-
-        $this->assertFalse($client->ping());
-    }
 }
