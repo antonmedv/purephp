@@ -51,7 +51,7 @@ class Proxy
     public function __call($method, $arguments)
     {
         if ($this->reflectionClass->hasMethod($method)) {
-            return $this->client->command([Client::STORAGE_COMMAND, $this->class, $this->name, $method, $arguments]);
+            return $this->client->command(['Pure\Command\StorageCommand', $this->class, $this->name, $method, $arguments]);
         } else {
             throw new \RuntimeException("Class `{$this->class}` does not have method `{$method}`.");
         }

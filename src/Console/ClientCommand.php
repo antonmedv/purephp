@@ -46,6 +46,8 @@ class ClientCommand extends Command
             'pure.queue',
             'pure.stack',
             'pure.priority',
+            'pure.delete',
+            'pure.ping',
             'exit',
         ];
 

@@ -9,10 +9,6 @@ namespace Pure;
 
 class Client
 {
-    const STORAGE_COMMAND = 1;
-    
-    const DELETE_COMMAND = 2;
-    
     const END_OF_COMMAND = 'END_OF_COMMAND';
 
     const READ_SIZE = 4096;
@@ -105,17 +101,6 @@ class Client
     }
 
     /**
-     * Delete storage on server.
-     * 
-     * @param string $name
-     * @return bool
-     */
-    public function delete($name)
-    {
-        return $this->command([self::DELETE_COMMAND, $name]);
-    }
-
-    /**
      * @param array $command
      * @return mixed
      * @throws \RuntimeException
@@ -123,12 +108,12 @@ class Client
     public function command($command)
     {
         $body = json_encode($command) . self::END_OF_COMMAND;
-        socket_write($this->socket, $body, strlen($body));
+        @socket_write($this->socket, $body, strlen($body));
 
         $command = null;
 
         $buffer = '';
-        while ($read = socket_read($this->socket, self::READ_SIZE)) {
+        while ($read = @socket_read($this->socket, self::READ_SIZE)) {
             $buffer .= $read;
 
             if (strpos($buffer, Server::END_OF_RESULT)) {
@@ -155,4 +140,31 @@ class Client
     {
         socket_close($this->socket);
     }
-} 
+
+    /**
+     * Delete storage on server.
+     *
+     * @param string $name
+     * @return bool
+     */
+    public function delete($name)
+    {
+        return $this->command(['Pure\Command\DeleteCommand', $name]);
+    }
+
+    /**
+     * Checks if server is alive.
+     *
+     * @return bool
+     */
+    public function ping()
+    {
+        try {
+            $pong = $this->command(['Pure\Command\PingCommand', 'ping']);
+        } catch (\RuntimeException $e) {
+            return false;
+        }
+
+        return $pong === 'pong';
+    }
+}

@@ -7,18 +7,18 @@
 
 namespace Pure\Storage;
 
-class QueueStorageTest extends \PHPUnit_Framework_TestCase
+class StackTest extends \PHPUnit_Framework_TestCase
 {
     public function testPushAndPop()
     {
-        $queue = new QueueStorage();
+        $queue = new StackStorage();
         $queue->push(1);
         $queue->push(2);
         $queue->push(3);
 
-        $this->assertEquals(1, $queue->pop());
-        $this->assertEquals(2, $queue->pop());
         $this->assertEquals(3, $queue->pop());
+        $this->assertEquals(2, $queue->pop());
+        $this->assertEquals(1, $queue->pop());
     }
 }
  

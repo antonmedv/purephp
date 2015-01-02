@@ -11,7 +11,7 @@ use React\EventLoop\Factory as LoopFactory;
 use React\Socket\Server as SocketServer;
 use React\Socket\ConnectionInterface;
 
-class Server
+class Server implements \ArrayAccess
 {
     const RESULT = 0;
 
@@ -48,6 +48,11 @@ class Server
      * @var Storage\StorageInterface[]
      */
     private $storages = [];
+
+    /**
+     * @var Command\CommandInterface[]
+     */
+    private $commands = [];
 
     /**
      * @param int $port
@@ -102,28 +107,43 @@ class Server
 
     /**
      * Detect and run command received from client.
-     * @param array $command
+     * @param array $arguments
      * @param ConnectionInterface $connection
      */
-    private function runCommand($command, ConnectionInterface $connection)
+    private function runCommand($arguments, ConnectionInterface $connection)
     {
         try {
 
-            $commandType = array_shift($command);
+            $commandClass = array_shift($arguments);
 
-            switch ($commandType) {
-
-                case Client::STORAGE_COMMAND:
-                    $result = $this->runStorageCommand($command, $connection);
-                    break;
-
-                case Client::DELETE_COMMAND:
-                    $result = $this->runDeleteCommand($command, $connection);
-                    break;
-
-                default:
-                    throw new \RuntimeException("Unknown command type `$commandType`.");
+            if (null !== $this->getLogger()) {
+                $this->log(
+                    'Command from ' . $connection->getRemoteAddress() .
+                    ": [$commandClass] " .
+                    join(', ', array_map('json_encode', $arguments))
+                );
             }
+
+
+            if (isset($this->commands[$commandClass])) {
+                $command = $this->commands[$commandClass];
+            } else {
+
+                if (!class_exists($commandClass)) {
+                    throw new \RuntimeException("Command class `$commandClass` does not found.");
+                }
+
+                $command = new $commandClass($this);
+
+                if (!$command instanceof Command\CommandInterface) {
+                    throw new \RuntimeException("Every command must implement Command\\CommandInterface.");
+                }
+
+                $this->commands[$commandClass] = $command;
+            }
+
+            $result = $command->run($arguments, $connection);
+            $result = [self::RESULT, $result];
 
         } catch (\Exception $e) {
 
@@ -133,66 +153,6 @@ class Server
         }
 
         $connection->write(json_encode($result) . self::END_OF_RESULT);
-    }
-
-
-    /**
-     * Runs storage command.
-     * Command represented as array of next structure [class, name, method, args] where
-     *  class - storage full class name,
-     *  name - name of storage to store (every storage has to have unique name),
-     *  method - method of storage to call,
-     *  args - arguments for that method.
-     *
-     * @param array $command
-     * @param ConnectionInterface $connection
-     * @return array
-     * @throws \RuntimeException
-     */
-    private function runStorageCommand($command, ConnectionInterface $connection)
-    {
-        list($class, $name, $method, $args) = $command;
-
-        if (null !== $this->logger) {
-            $this->log(
-                'Command from ' . $connection->getRemoteAddress() .
-                ": [$name] $class::$method(" .
-                join(', ', array_map('json_encode', $args)) .
-                ')'
-            );
-        }
-
-        if (isset($this->storages[$name])) {
-            if (!$this->storages[$name] instanceof $class) {
-                throw new \RuntimeException("Storage `$name` has type `" . get_class($this->storages[$name]) . "` (you request `$class`)");
-            }
-        } else {
-            $this->storages[$name] = new $class();
-        }
-
-        $call = [$this->storages[$name], $method];
-        $result = call_user_func_array($call, $args);
-
-        return [self::RESULT, $result];
-    }
-
-    /**
-     * Run delete storage command.
-     * 
-     * @param array $command
-     * @param ConnectionInterface $connection
-     * @return array
-     */
-    private function runDeleteCommand($command, ConnectionInterface $connection)
-    {
-        list($name) = $command;
-
-        if (isset($this->storages[$name])) {
-            unset($this->storages[$name]);
-            return [self::RESULT, true];
-        } else {
-            return [self::RESULT, false];
-        }
     }
 
     /**
@@ -216,12 +176,11 @@ class Server
     }
 
     /**
-     * @param string $name
-     * @return Storage\StorageInterface
+     * @return callable
      */
-    public function getStorage($name)
+    public function getLogger()
     {
-        return $this->storages[$name];
+        return $this->logger;
     }
 
     /**
@@ -234,10 +193,51 @@ class Server
     }
 
     /**
+     * @param string $name
+     * @return Storage\StorageInterface
+     */
+    public function getStorage($name)
+    {
+        return $this->storages[$name];
+    }
+
+    /**
      * @return \React\EventLoop\LoopInterface
      */
     public function getLoop()
     {
         return $this->loop;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetExists($offset)
+    {
+        return isset($this->storages[$offset]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetGet($offset)
+    {
+        return $this->storages[$offset];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this->storages[$offset] = $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function offsetUnset($offset)
+    {
+        unset($this->storages[$offset]);
     }
 }
