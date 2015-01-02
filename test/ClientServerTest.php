@@ -54,6 +54,8 @@ class ClientServerTest extends \PHPUnit_Framework_TestCase
 
         self::tearDownAfterClass();
 
+        sleep(1);
+
         $this->assertFalse($client->ping());
     }
 }
