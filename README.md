@@ -122,7 +122,7 @@ Example:
 $result = $pure->queue('collection')->filter('value > 100');
 
 // Limit to 10.
-$result = $pure->prioriry('collection')->filter('value > 100', 10);
+$result = $pure->priority('collection')->filter('value > 100', 10);
 
 // Complex expression.
 $result = $pure->of('collection')->filter('value["year"] > 2000 and value["name"] matches "/term/"');
