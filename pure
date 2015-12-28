@@ -2,9 +2,9 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
-Symfony\Component\Debug\ErrorHandler::register(false);
+Symfony\Component\Debug\ErrorHandler::register();
 
-$console = new Symfony\Component\Console\Application('PurePHP', '1.1.0');
+$console = new Symfony\Component\Console\Application('PurePHP', '1.2.0');
 $console->add(new Pure\Console\StartCommand());
 $console->add(new Pure\Console\ClientCommand());
 $console->run();
