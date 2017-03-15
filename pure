@@ -1,10 +1,23 @@
 #!/usr/bin/env php
 <?php
-require __DIR__ . '/vendor/autoload.php';
 
-Symfony\Component\Debug\ErrorHandler::register(false);
+if (is_file($autoload = getcwd() . '/vendor/autoload.php')) {
+    require $autoload;
+}
+elseif (is_file($autoload = __DIR__ . '/vendor/autoload.php')) {
+    require $autoload;
+} else {
+    fwrite(STDERR,
+        'You must set up the project dependencies, run the following commands:'.PHP_EOL.
+        'curl -s http://getcomposer.org/installer | php'.PHP_EOL.
+        'php composer.phar install'.PHP_EOL
+    );
+    exit(1);
+}
 
-$console = new Symfony\Component\Console\Application('PurePHP', '1.1.0');
+Symfony\Component\Debug\ErrorHandler::register();
+
+$console = new Symfony\Component\Console\Application('PurePHP', '2.0.0');
 $console->add(new Pure\Console\StartCommand());
 $console->add(new Pure\Console\ClientCommand());
 $console->run();
